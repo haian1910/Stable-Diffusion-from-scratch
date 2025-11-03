@@ -6,3 +6,4 @@ lightning
 pillow
 torchvision
 requests
+datasets

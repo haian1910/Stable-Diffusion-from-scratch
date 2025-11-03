@@ -1,12 +1,7 @@
 import argparse
 import os
-import tarfile
-import zipfile
-import io
-import requests
 from pathlib import Path
 from PIL import Image
-import random
 import math
 
 import torch
@@ -14,7 +9,7 @@ from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from tqdm import tqdm
-
+from datasets import load_dataset
 from transformers import CLIPTokenizer
 
 import model_loader
@@ -55,25 +50,10 @@ def download_and_extract(url: str, dest: Path):
         f.write(content)
 
 
-class ImageCaptionDataset(Dataset):
-    def __init__(self, root: Path, image_size=(WIDTH, HEIGHT)):
-        # root: directory containing images; captions must be in same directory with same basename + .txt
-        self.root = Path(root)
-        self.samples = []
-        for p in self.root.rglob("*"):
-            if p.suffix.lower() in IMG_EXTS:
-                # look for sidecar caption
-                caption_file = p.with_suffix('.txt')
-                caption = ""
-                if caption_file.exists():
-                    try:
-                        caption = caption_file.read_text(encoding='utf-8').strip()
-                    except Exception:
-                        caption = ""
-                self.samples.append((p, caption))
-        if len(self.samples) == 0:
-            raise RuntimeError(f"No images found under {root}. Put images (jpg/png/...) and optional .txt captions (same basename) in the folder.")
-
+class NarutoDataset(Dataset):
+    def __init__(self, split="train", image_size=(WIDTH, HEIGHT)):
+        self.dataset = load_dataset("lambdalabs/naruto-blip-captions", split=split)
+        
         self.transform = transforms.Compose([
             transforms.Resize(image_size, interpolation=Image.BICUBIC),
             transforms.CenterCrop(image_size),
@@ -83,13 +63,14 @@ class ImageCaptionDataset(Dataset):
         ])
 
     def __len__(self):
-        return len(self.samples)
+        return len(self.dataset)
 
     def __getitem__(self, idx):
-        path, caption = self.samples[idx]
-        img = Image.open(path).convert('RGB')
+        item = self.dataset[idx]
+        # HF dataset returns PIL Image for 'image' column
+        img = item['image']
         img = self.transform(img)
-        return img, caption
+        return img, item['text']
 
 
 def collate_fn(batch):
@@ -107,12 +88,8 @@ def get_time_embedding(timestep):
 def main(args):
     device = torch.device(args.device if torch.cuda.is_available() or args.device == 'cpu' else 'cpu')
 
-    data_dir = Path(args.data_dir)
-    if args.data_url and (not data_dir.exists() or len(list(data_dir.rglob('*'))) == 0):
-        print(f"Downloading dataset from {args.data_url} to {data_dir} ...")
-        download_and_extract(args.data_url, data_dir)
-
-    dataset = ImageCaptionDataset(data_dir, image_size=(WIDTH, HEIGHT))
+    print("Loading Naruto BLIP captions dataset...")
+    dataset = NarutoDataset(split=args.split, image_size=(WIDTH, HEIGHT))
     dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn)
 
     print("Loading models from checkpoint...")
@@ -236,8 +213,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_dir', type=str, default='./train_data', help='Local folder with images and optional .txt captions (same basename).')
-    parser.add_argument('--data_url', type=str, default='', help='Optional URL to download dataset (zip/tar.gz supported). If provided and data_dir empty, will download.')
+    parser.add_argument('--split', type=str, default='train', help='Dataset split to use (train/validation/test)')
     parser.add_argument('--ckpt_path', type=str, required=True, help='Path to standard weights checkpoint to load (same used by model_loader).')
     parser.add_argument('--tokenizer_vocab', type=str, default='./data/vocab.json', help='Path to tokenizer vocab.json')
     parser.add_argument('--tokenizer_merges', type=str, default='./data/merges.txt', help='Path to tokenizer merges.txt')
