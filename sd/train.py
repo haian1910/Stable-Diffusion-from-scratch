@@ -214,9 +214,9 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--split', type=str, default='train', help='Dataset split to use (train/validation/test)')
-    parser.add_argument('--ckpt_path', type=str, required=True, help='Path to standard weights checkpoint to load (same used by model_loader).')
-    parser.add_argument('--tokenizer_vocab', type=str, default='./data/vocab.json', help='Path to tokenizer vocab.json')
-    parser.add_argument('--tokenizer_merges', type=str, default='./data/merges.txt', help='Path to tokenizer merges.txt')
+    parser.add_argument('--ckpt_path', type=str, default='/content/Stable-Diffusion-from-scratch/data/v1-5-pruned-emaonly.ckpt', help='Path to standard weights checkpoint to load (same used by model_loader).')
+    parser.add_argument('--tokenizer_vocab', type=str, default='/content/Stable-Diffusion-from-scratch/data/vocab.json', help='Path to tokenizer vocab.json')
+    parser.add_argument('--tokenizer_merges', type=str, default='/content/Stable-Diffusion-from-scratch/data/merges.txt', help='Path to tokenizer merges.txt')
     parser.add_argument('--out_dir', type=str, default='./checkpoints', help='Where to save checkpoints')
     parser.add_argument('--device', type=str, default='cpu', help='Device to use (cpu or cuda)')
     parser.add_argument('--epochs', type=int, default=1)
