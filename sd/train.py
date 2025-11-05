@@ -52,7 +52,7 @@ def download_and_extract(url: str, dest: Path):
 
 class NarutoDataset(Dataset):
     def __init__(self, split="train", image_size=(WIDTH, HEIGHT)):
-        self.dataset = load_dataset("lambdalabs/naruto-blip-captions", split=split)
+        self.dataset = load_dataset("lambdalabs/naruto-blip-captions", split="train[:100]")
         
         self.transform = transforms.Compose([
             transforms.Resize(image_size, interpolation=Image.BICUBIC),
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_workers', type=int, default=2)
     parser.add_argument('--save_every', type=int, default=200, help='Steps between saves')
     parser.add_argument('--max_steps', type=int, default=0, help='Stop after this many steps (0 means no limit)')
-    parser.add_argument('--num_train_timesteps', type=int, default=1000)
+    parser.add_argument('--num_train_timesteps', type=int, default=500)
 
     args = parser.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
