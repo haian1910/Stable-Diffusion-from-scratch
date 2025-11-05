@@ -24,9 +24,9 @@ LATENTS_WIDTH = WIDTH // 8
 LATENTS_HEIGHT = HEIGHT // 8
 
 # Paths
-MODEL_PATH = "../data/v1-5-pruned-emaonly.ckpt"
-VOCAB_PATH = "../data/vocab.json"
-MERGES_PATH = "../data/merges.txt"
+MODEL_PATH = "/content/Stable-Diffusion-from-scratch/data/v1-5-pruned-emaonly.ckpt"
+VOCAB_PATH = "/content/Stable-Diffusion-from-scratch/data/vocab.json"
+MERGES_PATH = "/content/Stable-Diffusion-from-scratch/data/merges.txt"
 OUTPUT_DIR = "./checkpoints"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
