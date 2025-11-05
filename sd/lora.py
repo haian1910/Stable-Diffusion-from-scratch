@@ -23,6 +23,9 @@ class LoRALayer(nn.Module):
         nn.init.zeros_(self.lora_B)
     
     def forward(self, x):
+        # Ensure LoRA matrices are on the same device as input
+        if self.lora_A.device != x.device:
+            self.to(x.device)
         # x: (batch, ..., in_features)
         # Compute low-rank update: x @ A^T @ B^T * scaling
         return (x @ self.lora_A.T @ self.lora_B.T) * self.scaling

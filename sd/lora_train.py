@@ -149,13 +149,17 @@ def train():
         alpha=LORA_ALPHA
     )
     
+    # Move diffusion model (including LoRA layers) to device
+    diffusion = diffusion.to(DEVICE)
+    
     # Freeze all original parameters
     for param in diffusion.parameters():
         param.requires_grad = False
     
-    # Unfreeze only LoRA parameters
+    # Unfreeze only LoRA parameters and ensure they're on the correct device
     for param in lora_params:
         param.requires_grad = True
+        param.data = param.data.to(DEVICE)
     
     trainable_params = count_parameters(diffusion)
     print(f"\nTrainable parameters (LoRA only): {trainable_params:,}")

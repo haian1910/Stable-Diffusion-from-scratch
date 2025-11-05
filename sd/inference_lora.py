@@ -16,7 +16,7 @@ MERGES_PATH = "/content/Stable-Diffusion-from-scratch/data/merges.txt"
 # LoRA Configuration
 LORA_RANK = 4
 LORA_ALPHA = 1.0
-LORA_WEIGHTS_PATH = "./checkpoints_lora/lora_best.pt"  # or lora_final.pt
+LORA_WEIGHTS_PATH = "/content/checkpoints_lora/lora_best.pt"  # or lora_final.pt
 
 def load_model_with_lora(model_path, lora_path, device):
     """Load base model and inject LoRA weights"""
