@@ -15,9 +15,9 @@ from sd.ddpm import DDPMSampler
 from lora import inject_lora_to_diffusion_unet, get_lora_parameters, save_lora_weights
 
 # Configuration
-BATCH_SIZE = 1
+BATCH_SIZE = 8
 LEARNING_RATE = 1e-4  # Higher LR for LoRA
-NUM_EPOCHS = 10
+NUM_EPOCHS = 20
 SAVE_EVERY = 50  # Save checkpoint every N steps
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 WIDTH = 512
@@ -34,7 +34,7 @@ USE_GRADIENT_CHECKPOINTING = False  # Can keep False with LoRA
 MODEL_PATH = "/content/Stable-Diffusion-from-scratch/data/v1-5-pruned-emaonly.ckpt"
 VOCAB_PATH = "/content/Stable-Diffusion-from-scratch/data/vocab.json"
 MERGES_PATH = "/content/Stable-Diffusion-from-scratch/data/merges.txt"
-OUTPUT_DIR = "./checkpoints_lora"
+OUTPUT_DIR = "/content/Stable-Diffusion-from-scratch/checkpoints_lora"
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -102,7 +102,7 @@ def train():
     
     # Load dataset
     print("\n=== Loading Dataset ===")
-    dataset = load_dataset("lambdalabs/naruto-blip-captions", split="train[:100]")
+    dataset = load_dataset("lambdalabs/naruto-blip-captions", split="train[:300]")
     dataloader = DataLoader(
         dataset, 
         batch_size=BATCH_SIZE, 
