@@ -10,12 +10,12 @@ import os
 import gc
 
 # Import your SD modules
-from sd.model_loader import preload_models_from_standard_weights
-from sd.ddpm import DDPMSampler
+from model_loader import preload_models_from_standard_weights
+from ddpm import DDPMSampler
 from lora import inject_lora_to_diffusion_unet, get_lora_parameters, save_lora_weights
 
 # Configuration
-BATCH_SIZE = 8
+BATCH_SIZE = 1
 LEARNING_RATE = 1e-4  # Higher LR for LoRA
 NUM_EPOCHS = 20
 SAVE_EVERY = 50  # Save checkpoint every N steps

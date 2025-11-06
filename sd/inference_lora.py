@@ -2,8 +2,10 @@ import torch
 from PIL import Image
 from transformers import CLIPTokenizer
 import numpy as np
+from IPython.display import display
+import matplotlib.pyplot as plt
 
-from sd.model_loader import preload_models_from_standard_weights
+from model_loader import preload_models_from_standard_weights
 from sd.pipeline import generate
 from lora import inject_lora_to_diffusion_unet, load_lora_weights
 
@@ -66,6 +68,16 @@ def generate_image(
     
     return Image.fromarray(output_image)
 
+def display_image_in_notebook(image, title=""):
+    """Display image in Jupyter notebook using matplotlib"""
+    plt.figure(figsize=(10, 10))
+    plt.imshow(image)
+    plt.axis('off')
+    if title:
+        plt.title(title, fontsize=12, pad=10)
+    plt.tight_layout()
+    plt.show()
+
 def main():
     print(f"Using device: {DEVICE}\n")
     
@@ -107,6 +119,9 @@ def main():
         output_path = f"output_lora_{i+1}.png"
         image.save(output_path)
         print(f"Saved: {output_path}")
+        
+        # Display image in notebook
+        display_image_in_notebook(image, title=f"Image {i+1}: {prompt}")
     
     print("\n" + "="*60)
     print("Generation complete!")
