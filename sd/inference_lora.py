@@ -6,7 +6,7 @@ from IPython.display import display
 import matplotlib.pyplot as plt
 
 from model_loader import preload_models_from_standard_weights
-from sd.pipeline import generate
+from pipeline import generate
 from lora import inject_lora_to_diffusion_unet, load_lora_weights
 
 # Configuration
